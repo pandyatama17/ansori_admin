@@ -1,3 +1,7 @@
+@foreach ($rooms as $rm)
+    
+@endforeach
+
 <img src="{{ asset('images/maps/meeting_room_r1.png') }}" id="hotDesksImg" usemap="#meetingRoomMap" oncontextmenu="return false;" style="pointer-events: initial; @if($agent->isMobile()) max-width:90%; @else max-width:90%; @endif"
 />
 <map id="hotDesksMap" name="meetingRoomMap">

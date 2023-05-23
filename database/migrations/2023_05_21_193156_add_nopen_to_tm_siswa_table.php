@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReservationPrivilegesTable extends Migration
+class AddNopenToTmSiswaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateReservationPrivilegesTable extends Migration
      */
     public function up()
     {
-        Schema::create('reservation_privileges', function (Blueprint $table) {
-            $table->id();
-            $table->integer('user_id');
-            $table->integer('zone_id');
+        Schema::table('tm_siswa', function (Blueprint $table) {
+            $table->text('nis')->nullable()->change();
+            $table->text('nopen');
         });
     }
 
@@ -27,6 +26,8 @@ class CreateReservationPrivilegesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reservation_privileges');
+        Schema::table('tm_siswa', function (Blueprint $table) {
+            $table->dropColumn('nopen');
+        });
     }
 }

@@ -120,7 +120,7 @@ $demoTickets = (object) [['date' => \Carbon\Carbon::now(),'type'=>'M', 'status' 
                                 <label for="ft" class="active">Ticket Time<sup class="red-text">*</label>
                               </div>
                               <div class="input-field col s6 m3">
-                                <input type="number" id="dr" name="duration" value="1" min="1" max="5">
+                                <input type="number" id="dr" name="duration" value="1" min="1">
                                 <label for="dr" class="active">Duration<sup>(in hours)</sup><sup class="red-text">*</label>
                               </div>
                             </div>

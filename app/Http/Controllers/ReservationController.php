@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\Session;
 
 class ReservationController extends Controller
 {
-    public function __construct(){
-        // $now = Carbon::parse('2022-02-03 07:00:00')->addMinutes(15);
-        $now = Carbon::now()->addMinutes(15);
-        Reservation::whereNull('start_time')->where('datetime_start', '<=', $now)->delete();
-    }
+    // public function __construct(){
+    //     // $now = Carbon::parse('2022-02-03 07:00:00')->addMinutes(15);
+    //     $now = Carbon::now()->addMinutes(15);
+    //     Reservation::whereNull('start_time')->where('datetime_start', '<=', $now)->delete();
+    // }
     public function index()
     {
         if (Auth::user() && Auth::user()->role == 'ADMIN') {
@@ -105,10 +105,11 @@ class ReservationController extends Controller
                         'reject' => route('reject_ticket',$ticket->id),
                     ]
                 ];
-                $mail = Mail::to($mailTo);
-                if (Auth::user()->cc_id) {
-                    $mail->cc($mailCC);
-                }
+                // $mail = Mail::to($mailTo);
+                // if (Auth::user()->cc_id) {
+                //     $mail->cc($mailCC);
+                // }
+                $mail = Mail::to('recp@doku.com');
                 $mail->bcc('bookingsystem@firoshal.com','Booking System');
                 
                 $mail->send(new TicketRequestMailer($mailVariables));
@@ -174,15 +175,32 @@ class ReservationController extends Controller
         $reserv->created_at = Carbon::now();
         if ($ticket->type == 'D' ?  $type = 'Desk' : $type = 'Room');
 
-        try {
-            $reserv->save();
-            $ticket->status = 2;
-            $ticket->save();
-            $message = ['type'=> 'success', 'body' => $type.' sucsesfully reserved for '.Carbon::parse($ticket->datetime)->format('l, d F, Y'),'title'=>'Success'];
-        } catch (\Throwable $th) {
-            $message = ['type'=> 'error', 'body' => $type.' reservation failed, error '.$th->getMessage(),'title'=>'Failed'];        
+        $validateReserv = Reservation::whereRaw("(datetime_start between'".$reserv->datetime_start."' and '".$reserv->datetime_end."')")->get();
+        
+        $errValidate = 0;
+        foreach ($validateReserv as $vr) {
+            if ($vr->desk_id == $reserv->desk_id) {
+                $errValidate++;
+            }
         }
-        return redirect()->route('calendar')->with('message',$message);
+        // return json_encode($errValidate);
+
+        if($errValidate > 0)
+        {
+            $message = ['type'=> 'error', 'body' =>'Oops! '. $type.' reservation failed. please try selecting another room! ','title'=>'Failed']; 
+        }
+        else
+        {
+            try {
+                $reserv->save();
+                $ticket->status = 2;
+                $ticket->save();
+                $message = ['type'=> 'success', 'body' => $type.' sucsesfully reserved for '.Carbon::parse($ticket->datetime)->format('l, d F, Y'),'title'=>'Success'];
+            } catch (\Throwable $th) {
+                $message = ['type'=> 'error', 'body' => $type.' reservation failed, error '.$th->getMessage(),'title'=>'Failed'];        
+            }
+        }
+        return redirect()->route('calendar_mr')->with('message',$message);
     }
 
     public function getDesksWithDate()

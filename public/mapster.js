@@ -50,6 +50,10 @@ $(document).ready(function(){
     console.log(areaItems);
     var selectedBefore;
     var selectedCurrent;
+    var status;
+    var available;
+    var SBstatus;
+    var SBavailable;
     var mapper = $('#hotDesksImg');
     mapper.mapster({
         mapKey: 'data-key',
@@ -73,12 +77,17 @@ $(document).ready(function(){
       areas: areaItems,
       onClick:function(e) {
         selectedCurrent = e.key;
-        console.log(e);
-        var status = $("#desk-"+selectedCurrent).data('status');
-        var available = $("#desk-"+selectedCurrent).data('availability');
+        // console.log(e);
+        status = $("#room-"+selectedCurrent).data('status');
+        available = $("#room-"+selectedCurrent).data('availability');
+        SBstatus = $("#room-"+selectedBefore).data('status');
+        SBavailable = $("#room-"+selectedBefore).data('availability');
+        console.log("SC : " + selectedCurrent+", stat : "+status+" | SB  "+selectedBefore+", stat : "+SBstatus);
         if (status != 0 && available != 0) {
           if (selectedBefore) {
-            mapper.mapster('set', false, selectedBefore);
+            if ($("#room-"+selectedBefore).data('status') != 0) {
+              mapper.mapster('set', false, selectedBefore);
+            }
           }
           selectedBefore = e.key;
         }

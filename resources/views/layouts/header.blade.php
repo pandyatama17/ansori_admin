@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html class="loading" lang="en" data-textdirection="ltr">
   <head>
-    <link rel="icon" href="{{ asset('images/logo.png') }}">
+    <!-- PWA  -->
+    <meta name="theme-color" content="#6777ef"/>
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="manifest" href="{{ asset('/manifest.json') }}"><link rel="icon" href="{{ asset('images/logo.png') }}">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>MRDERES</title>
+    <title>Ansori</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/vendors/vendors.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/themes/vertical-modern-menu-template/materialize.css')}}">
@@ -165,7 +169,7 @@
     @yield('content')
     <footer class="page-footer footer footer-static footer-dark gradient-45deg-indigo-purple gradient-shadow navbar-border navbar-shadow">
       <div class="footer-copyright">
-        <div class="container"><span>&copy; 2022          KIMOCHIINSIDE All rights reserved.</span></div>
+        <div class="container"><span>&copy; {{Carbon\Carbon::today()->format('Y')}}          Difa Digitech Solutions All rights reserved.</span></div>
       </div>
     </footer>
     <script src="{{asset('app-assets/vendors/materialize-stepper/materialize-stepper.min.js')}}"></script>
@@ -179,6 +183,8 @@
     <script src="{{ asset('app-assets/vendors/select2/select2.full.min.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{asset('demo.js')}}"></script>
+    <script src="{{asset('simple.money.format.js')}}"></script>
+    <script src="{{asset('scripts.js')}}"></script>
     <script src="{{asset('mapster.js')}}"></script>
 
     <script src="{{ asset('app-assets/vendors/data-tables/js/jquery.dataTables.min.js') }}"></script>
@@ -199,5 +205,12 @@
             }, 1000);
         </script>
     @endif
+    <script>
+      if (!navigator.serviceWorker.controller) {
+          navigator.serviceWorker.register("/sw.js").then(function (reg) {
+              console.log("Service worker has been registered for scope: " + reg.scope);
+          });
+      }
+  </script>
   </body>
 </html>

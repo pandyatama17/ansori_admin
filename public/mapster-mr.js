@@ -30,6 +30,7 @@ $(document).ready(function(){
             item['stroke'] = true,
             item['staticSelect'] = true,
             item['isDeselectable'] = false,
+            item['isSelectable'] = false,
             item['selected'] = true,
             item['render_select'] = {
                 fillOpacity: 1,
@@ -73,12 +74,15 @@ $(document).ready(function(){
       areas: areaItems,
       onClick:function(e) {
         selectedCurrent = e.key;
-        console.log(e);
+        // console.log(e);
+        console.log("SC : " + selectedCurrent+" | SB  "+selectedBefore);
         var status = $("#desk-"+selectedCurrent).data('status');
         var available = $("#desk-"+selectedCurrent).data('availability');
         if (status != 0 && available != 0) {
           if (selectedBefore) {
-            mapper.mapster('set', false, selectedBefore);
+            if ($("#desk-"+selectedBefore).data('status') != 0) {
+              mapper.mapster('set', false, selectedBefore);
+            }
           }
           selectedBefore = e.key;
         }

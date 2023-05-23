@@ -112,6 +112,18 @@ class AdminController extends Controller
        return view('admin.desks')->with('crumbs',$crumbs)->with('desks',$desks);
     //    return $desks;
     }
+    public function showReservations()
+    {
+        $this->validateAuth();
+        $crumbs = array('page'=>'Reservations','pages'=>[['title'=>'Admin Area','url' => '#']]);
+        $reservations = Reservation::leftJoin('users as u', 'u.id','=','reservations.user_id')
+                    ->leftJoin('desks as d', 'd.id','=','reservations.desk_id')
+                    ->orderBy('reservations.datetime_start','desc')
+                    ->select('reservations.*','u.name as user', 'd.desk_name as desk')
+                   ->get();
+       return view('admin.reservation.list')->with('crumbs',$crumbs)->with('reservations',$reservations);
+       return $reservations;
+    }
     public function createReservation()
     {
         $this->validateAuth();
@@ -300,6 +312,75 @@ class AdminController extends Controller
             $message = ['type'=> 'success', 'body' => 'password for user '.$user->name.' sucesfully reset! ','title'=> ' Successful!','redirect' => route('show_users')];
         } catch (\Throwable $th) {
             $message = ['type'=> 'success', 'body' => $th->getMessage(),'title'=>'Failed to reset User '.$user->name.' password!','redirect' => route('show_users')];
+        }
+        echo json_encode($message);
+    }
+
+    public function getReservations($method)
+    {
+        // return $method;
+        
+        switch ($method) {
+            case 'history':
+                $reservations = Reservation::leftJoin('users as u', 'u.id','=','reservations.user_id')
+                                ->leftJoin('desks as d', 'd.id','=','reservations.desk_id')
+                                ->whereNotNull('reservations.start_time')
+                                ->whereRaw("reservations.datetime_end <'".$startofday."'")
+                                ->orderBy('reservations.datetime_start','desc')
+                    ->select('reservations.*','u.name as user', 'd.desk_name as desk')
+                    ->get();
+                break;
+            case 'tomorrow':
+                $startofday = Carbon::now()->startOfDay()->addDays(1)->toDateString();
+                $endofday = Carbon::now()->addDays(2)->endOfDay()->toDateString();
+                    $reservations = Reservation::leftJoin('users as u', 'u.id','=','reservations.user_id')
+                                        ->leftJoin('desks as d', 'd.id','=','reservations.desk_id')
+                                        ->whereRaw("(reservations.datetime_start between'".$startofday."' and '".$endofday."')")
+                                        ->orderBy('reservations.datetime_start','desc')
+                            ->select('reservations.*','u.name as user', 'd.desk_name as desk')
+                            ->get();
+                    break;
+            case 'today':
+                $startofday = Carbon::now()->startOfDay()->toDateString();
+                $endofday = Carbon::now()->addDays(1)->endOfDay()->toDateString();
+                $reservations = Reservation::leftJoin('users as u', 'u.id','=','reservations.user_id')
+                                    ->leftJoin('desks as d', 'd.id','=','reservations.desk_id')
+                                    ->whereRaw("(reservations.datetime_start between'".$startofday."' and '".$endofday."')")
+                                    ->orderBy('reservations.datetime_start','desc')
+                        ->select('reservations.*','u.name as user', 'd.desk_name as desk')
+                        ->get();
+                break;
+            case 'upcoming':
+                $reservations = Reservation::leftJoin('users as u', 'u.id','=','reservations.user_id')
+                                ->leftJoin('desks as d', 'd.id','=','reservations.desk_id')
+                                ->whereNull('reservations.start_time')
+                                ->orderBy('reservations.datetime_start','desc')
+                    ->select('reservations.*','u.name as user', 'd.desk_name as desk')
+                    ->get();
+            default :
+                $reservations = Reservation::leftJoin('users as u', 'u.id','=','reservations.user_id')
+                                ->leftJoin('desks as d', 'd.id','=','reservations.desk_id')
+                                ->orderBy('reservations.datetime_start','desc')
+                    ->select('reservations.*','u.name as user', 'd.desk_name as desk')
+                    ->get();
+                break;
+        }
+        return view('admin.reservation.list_content')->with('reservations',$reservations);
+    }
+
+    public function deleteReservation($id)
+    {
+        $reservation = Reservation::find($id);
+        $resid = $reservation->id;
+        if (Auth::user()->id == $reservation->user_id || Auth::user()->role == 'ADMIN') 
+        {
+            $reservation->start_time = Carbon::now(); 
+            try {
+                $reservation->delete();
+                $message = ['type'=> 'success', 'body' => 'Reservation Deleted','title'=>'Success!','redirect' => route('show_reservations')];
+            } catch (\Throwable $th) {
+                $message = ['type'=> 'error', 'body' => $th->getMessage(),'title'=> 'Check In failed!','redirect' => '#'];        
+            }
         }
         echo json_encode($message);
     }

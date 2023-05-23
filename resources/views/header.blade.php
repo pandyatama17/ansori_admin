@@ -7,8 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>MRDERES</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+    <title>Nama Aplikasi</title>
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="https://storage.googleapis.com/non-spec-apps/mio-icons/latest/outline.css">
+
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/vendors/vendors.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/themes/vertical-modern-menu-template/materialize.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/themes/vertical-modern-menu-template/style.css')}}">
@@ -165,7 +167,7 @@
     @yield('content')
     <footer class="page-footer footer footer-static footer-dark gradient-45deg-indigo-purple gradient-shadow navbar-border navbar-shadow">
       <div class="footer-copyright">
-        <div class="container"><span>&copy; 2022          KIMOCHIINSIDE All rights reserved.</span></div>
+        <div class="container"><span>&copy; {{Carbon\Carbon::today()->format('Y')}}          Difa Digitech Solutions All rights reserved.</span></div>
       </div>
     </footer>
     <script src="{{asset('app-assets/vendors/materialize-stepper/materialize-stepper.min.js')}}"></script>
@@ -179,6 +181,7 @@
     <script src="{{ asset('app-assets/vendors/select2/select2.full.min.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{asset('demo.js')}}"></script>
+    <script src="{{asset('scripts.js')}}"></script>
     <script src="{{asset('mapster.js')}}"></script>
 
     <script src="{{ asset('app-assets/vendors/data-tables/js/jquery.dataTables.min.js') }}"></script>

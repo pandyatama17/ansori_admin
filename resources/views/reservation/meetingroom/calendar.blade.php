@@ -67,7 +67,7 @@ $timePoints = ['07:00','08:00','09:00','10:00','11:00',
                         foreach ($fReserve as $key => $found) {
                             if ($found && $desk->id == $found->desk_id) {
                                 $reserve = $found;
-                                $colspan = $reserve->duration;
+                                $colspan = $reserve->duration + 1;
                                 $arr = ['colspan' => $colspan,'reserve'=>$reserve, 'time'=>$timeFix,'tpPassed'=>$tpPassed];
                                 $tpPrint[$tpPrintKey]['colspan'] =  $colspan;    
                                 $tpPrint[$tpPrintKey]['reserve'] =  $reserve;    
@@ -87,7 +87,9 @@ $timePoints = ['07:00','08:00','09:00','10:00','11:00',
                         for ($i=1; $i < $data['colspan']; $i++) { 
                             $spannedTime = $startTime->addHours(1);
                             $spannedKey = array_keys(array_combine(array_keys($tpPrint), array_column($tpPrint, 'time')),$spannedTime);
-                            unset($tpPrint[$spannedKey[0]]);
+                            if ($spannedKey) {
+                                unset($tpPrint[$spannedKey[0]]);
+                            }
                             $x++;
                         }   
                         $tpPrint[$loopKey]['spannedData'] = $spannedData;
@@ -113,7 +115,7 @@ $timePoints = ['07:00','08:00','09:00','10:00','11:00',
                                 class="center"
                             @endif
                         @endif
-                    @endif>
+                    @endif style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
                         @if ($data['reserve'])
                             @if (!$data['reserve']['start_time'] && $data['reserve']['user_id'] == Auth::user()->id && \Carbon\Carbon::parse($data['reserve']['datetime_start'])->isSameDay(\Carbon\Carbon::now()))
                                 <a href="{{ route('check_in',$data['reserve']['id']) }}" class="waves-effect white-text checkInBtn tooltipped right" data-tooltip="Check In"

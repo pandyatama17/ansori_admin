@@ -69,15 +69,27 @@ $(document).ready(function(){
     $('.timepicker').mdtimepicker({
         format: 'h:mm tt',
         // hourPadding: true,
-        is24hour: true,
+        is24hour: true
     });
-
+    $('.mdtp__time_m').on('click',function(event) {
+        $('.timepicker').mdtimepicker('hide');
+        var ndt = new Date();
+        var sptm;
+        if (ndt.getHours() >= 07 || ndt.getHours() < 16) {
+            sptm = $(".mdtp__time_holder > .mdtp__time_h").html();
+        } else {
+            sptm = '07';
+        }
+        $('.timepicker').mdtimepicker('setValue',sptm+':00');
+    });
+    $('.ok').on('click',function (event) {
+        var sptm = $(".mdtp__time_holder > .mdtp__time_h").html();
+        // console.log(sptm);
+        $('.timepicker').mdtimepicker('setValue',sptm+':00');
+    })
     $(".mdtp__hour_holder > .mdtp__digit").on('click',function(){
-        // console.log($(this).html());
         var sptm = $(this).children('span').html();
-        console.log(sptm);
-        // alert('pasd');
-        // $(".mdtp__minute_holder > .mdtp__digit.rotate-90.marker").addClass('active');
+        // console.log(sptm);
         $('.timepicker').mdtimepicker('hide');
         $('.timepicker').mdtimepicker('setValue',sptm+':00');
     });
@@ -99,15 +111,15 @@ $(document).ready(function(){
     else
     {
         var datepicker = $('.datepicker').datepicker({
-            minDate: new Date(),
+            minDate: new Date(1990,1,1),
             // max_date: max_date,
             container: 'body',
-            disableDayFn: function(date) {
-                if(date.getDay() > 0 && date.getDay() < 6) // getDay() returns a value from 0 to 6, 1 represents Monday
-                    return false;
-                else
-                    return true;
-              }
+            // disableDayFn: function(date) {
+            //     if(date.getDay() > 0 && date.getDay() < 6) // getDay() returns a value from 0 to 6, 1 represents Monday
+            //         return false;
+            //     else
+            //         return true;
+            //   }
         });
     }
     
@@ -242,7 +254,8 @@ $(document).ready(function(){
         {
             $.ajax({
                 // url : assetsUrl+'ajax/getDesksForAdmin/',
-                url : 'https://www.mrderes.com/public/ajax/getDesksForAdmin',
+                // url : 'https://www.mrderes.com/public/ajax/getDesksForAdmin',
+                url : $(this).attr('action'),
                 type : 'POST',
                 data : {_token:_token,userid:userid,name:name,date:date,time:time,type:type,duration:duration,request_notes:reqn},
                 beforeSend: function(){
@@ -393,7 +406,7 @@ $(document).ready(function(){
     $('#adminUserListTrigger').on('click', function () {
         $("#content-form").hide();
         $("#content-list").show();
-        
+
     });
     $(".editUserTrigger").on('click', function (e) {
         e.preventDefault();
@@ -647,6 +660,60 @@ $(document).ready(function(){
             }
         });
     });
+
+    $('.sortReservations').on('click', function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "GET",
+            url: assetsUrl+"ajax/getReservationsAdmin/"+$(this).attr('href'),
+            dataType: "html",
+            beforeSend: function(){
+                $('.main-loader').show();
+            },
+            success: function (response) {
+                $('#content-list').html(response);
+                reload_js(assetsUrl+'app-assets/js/scripts/app-contacts.js');
+                reload_js(assetsUrl+'demo.js');
+                $('.main-loader').hide();
+            }
+        });
+    });
+    $('.deleteReservation').on('click',function(event) 
+    {
+        event.preventDefault();
+        Swal.fire({
+            icon: "warning",
+            title : "Are you sure?",
+            text  : "Confirm reservation deletion for "+$(this).data('id')+" "+$(this).data('desk')+", "+$(this).data('date')+" "+$(this).data('time')+"? this process cannot be undone."
+        }).then((result)=>{
+            if (result.isConfirmed) {
+                // Swal.fire('OK');
+                $.ajax({
+                    type: "GET",
+                    url: $(this).attr('href'),
+                    dataType: "JSON",
+                    beforeSend: function(params) {
+                        $(".main-loader").show();   
+                    },
+                    success: function (response) {
+                        $(".main-loader").hide();
+                        Swal.fire({
+                            title : response.title,
+                            text : response.body,
+                            icon : response.type
+                        }).then(() => {
+                            window.location = response.redirect
+                        });           
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        $(".main-loader").hide();
+                        Swal.fire(xhr.status, xhr.responseText, "error");
+                        console.log(thrownError);
+                    }
+                });
+            }
+        });    
+    })
 });
 
 function capitalize(string){

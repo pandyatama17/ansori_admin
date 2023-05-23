@@ -8,6 +8,7 @@ $(document).ready(function () {
    };
 
    var table = $("#data-table-contact").DataTable({
+        order: [[0, 'desc'], [2, 'asc'], [1, 'asc'],[3, 'asc']],
       scrollY: calcDataTableHeight(),
       scrollCollapse: true,
       scrollX: false,

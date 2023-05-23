@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateMeetingRoomToDesksTable extends Migration
+class AddTingkatanAndKelasToTmSiswa extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class UpdateMeetingRoomToDesksTable extends Migration
      */
     public function up()
     {
-        Schema::table('desks', function (Blueprint $table) {
-            $table->boolean('has_parent')->default(false)->after('zone_id');
-            $table->integer('parent_id')->after('has_parent');
+        Schema::table('tm_siswa', function (Blueprint $table) {
+            $table->integer('tingkatan')->after('nama');
+            $table->integer('kelas')->after('tingkatan');
         });
     }
 
@@ -26,8 +26,9 @@ class UpdateMeetingRoomToDesksTable extends Migration
      */
     public function down()
     {
-        Schema::table('desks', function (Blueprint $table) {
-            //
+        Schema::table('tm_siswa', function (Blueprint $table) {
+            $table->dropColumn('tingkatan');
+            $table->dropColumn('kelas');
         });
     }
 }
