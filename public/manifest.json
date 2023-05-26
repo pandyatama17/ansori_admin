@@ -1,0 +1,17 @@
+{
+    "name": "Doku Booking System",
+    "short_name": "DBS",
+    "start_url": "/index.php",
+    "background_color": "#e51c23",
+    "description": "Boooking System for Hot Desks and Meeting Rooms",
+    "display": "fullscreen",
+    "theme_color": "#e51c23",
+    "icons": [
+        {
+            "src": "images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
