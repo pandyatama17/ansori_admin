@@ -34,6 +34,10 @@
                                 <li class="active">
                                     <div class="collapsible-header gradient-45deg-purple-amber white-text">Data Umum</div>
                                     <div class="collapsible-body white">
+                                        <div class="input-field col s12">
+                                            <label for="nama">Nama Beban:<span class="red-text">*</span></label>
+                                            <input type="text" id="nama" name="nama">
+                                        </div>
                                         <div class="input-field col s12 m5">
                                             <select name="id_tahunajar" class="select2 browser-default" id="id_tahunajarSelect" required>
                                                 <option value="1">2022-2023</option>
